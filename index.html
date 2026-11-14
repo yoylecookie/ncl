@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Redaction+50:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<title>Novice Calculus Lessons</title>
+
+<style>
+body {
+    font-family:"Redaction 50";
+    text-align:center;
+}
+
+button {
+    margin-top:20px;
+    border-radius:10px;
+    padding:10px;
+    width:100%;
+    border:none;
+    transition-duration:0.4s;
+    position:relative;
+    overflow:hidden;
+}
+
+button > img {
+    border-radius:10px;
+}
+
+button:hover {
+    color:white;
+    background-color:black;
+}
+
+.gradient {
+    background-image:linear-gradient(45deg, #ffb014, #ff3fb2);
+    position:relative;
+}
+
+.spark {
+    position:absolute;
+    width:16px;
+    height:16px;
+    background:#ffffff80;
+    clip-path:polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+    transform:scale(0);
+    opacity:-100;
+    pointer-events:none;
+}
+
+.gradient:hover .spark {
+    animation:pop 0.7s cubic-bezier(.2,.9,.3,1.4) calc(var(--i)*90ms) both;
+}
+
+@keyframes pop {
+    0% {
+        transform:scale(0) rotate(0);
+        opacity:0;
+    }
+    60% {
+        transform:scale(1.25) rotate(300deg);
+        opacity:1;
+    }
+    100% {
+        transform:scale(1) rotate(60deg);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>NOVICE CALCULUS LESSONS</h1>
+<p>Calculus lessons for begginers</p>
+
+<img src="https://file.garden/auoQ7S0R41ISH5n-/logo.png" width="140px">
+
+<br>
+
+<button class="gradient">
+    Download offline course
+    <span class="spark" style="--i:0; top:15%; left:15%;"></span>
+    <span class="spark" style="--i:1; top:65%; left:30%;"></span>
+    <span class="spark" style="--i:2; top:20%; left:50%;"></span>
+    <span class="spark" style="--i:3; top:70%; left:70%;"></span>
+    <span class="spark" style="--i:4; top:15%; left:85%;"></span>
+</button>
+
+<button onclick="window.location.href = '/lesson/1'">
+    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/car.png" width="60px">
+    <br>Lesson 1
+</button>
+
+<button>
+    <img src="https://img.icons8.com/fluent/1200/geometry-dash.jpg" width="60px">
+    <br>Lesson 2
+</button>
+
+<button>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSatB2K5fid72725457pwHXLUyZbp98ssxI1BY-fArZOw&s=10" width="60px">
+    <br>Lesson 3
+</button>
+
+</body>
+</html>
