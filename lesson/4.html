@@ -18,6 +18,22 @@ iframe {
     border:solid 1px;
     border-radius:10px;
 }
+
+button {
+    margin-top:20px;
+    border-radius:10px;
+    padding:10px;
+    width:100%;
+    border:none;
+    transition-duration:0.4s;
+    position:relative;
+    overflow:hidden;
+}
+
+button:hover {
+    color:white;
+    background-color:black;
+}
 </style>
 </head>
 
@@ -25,11 +41,15 @@ iframe {
 
 <h1>NOVICE CALCULUS LESSONS</h1>
 <p>Lesson 4</p>
-<iframe src="https://game316009.konggames.com/gamez/0031/6009/live/index.html"></iframe>
-<p>WASD - Move</p>
-<p>Arrow keys - Move Camera</p>
-<p>Space - Jump</p>
-<p>Space (long press) - Boost</p>
-<p>C - Honk</p>
+<div id="main">
+<img src="/warning.png">
+<br>
+<button onclick="load()">Continue</button>
+</div>
+<script>
+    function load() {
+        document.getElementById("main").innerHTML = '<iframe src="/unscanned/retro1.html"></iframe>';
+    }
+</script>
 </body>
 </html>
