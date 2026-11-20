@@ -1,135 +1,285 @@
+
 <!DOCTYPE html>
-<html>
+<html xmlns='https://www.w3.org/1999/xhtml' lang='' xml:lang=''>
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Redaction+50:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<title>Novice Calculus Lessons</title>
+	<meta charset='utf-8' />
+	<meta name='viewport' content='width=device-width, user-scalable=no' />
+	<title>blueskywrld</title>
+	<style type='text/css'>
 
-<style>
-body {
-    font-family:"Redaction 50";
-    text-align:center;
-}
+		body {
+			touch-action: none;
+			margin: 0;
+			border: 0 none;
+			padding: 0;
+			text-align: center;
+			background-color: #137728;
+			background-image:url(index.png);
+			background-repeat: no-repeat;
+			background-position: 50% 0%;
+		}
 
-button {
-    margin-top:20px;
-    border-radius:10px;
-    padding:10px;
-    width:100%;
-    border:none;
-    transition-duration:0.4s;
-    position:relative;
-    overflow:hidden;
-}
+		#canvas {
+			display: block;
+			margin: 0;
+			color: white;
+		}
 
-button > img {
-    border-radius:10px;
-}
+		#canvas:focus {
+			outline: none;
+		}
 
-button:hover {
-    color:white;
-    background-color:black;
-}
+		.godot {
+			font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+			color: #e0e0e0;
+			background-color: #3b3943;
+			background-image: linear-gradient(to bottom, #403e48, #35333c);
+			border: 1px solid #45434e;
+			box-shadow: 0 0 1px 1px #2f2d35;
+		}
 
-.gradient {
-    background-image:linear-gradient(45deg, #ffb014, #ff3fb2);
-    position:relative;
-}
 
-.spark {
-    position:absolute;
-    width:16px;
-    height:16px;
-    background:#ffffff80;
-    clip-path:polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
-    transform:scale(0);
-    opacity:-100;
-    pointer-events:none;
-}
+		/* Status display
+		 * ============== */
+ 
+		#status {
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			/* don't consume click events - make children visible explicitly */
+			visibility: hidden;
+		}
 
-.gradient:hover .spark {
-    animation:pop 0.7s cubic-bezier(.2,.9,.3,1.4) calc(var(--i)*90ms) both;
-}
+		#status-progress {
+			width: 366px;
+			height: 20px;
+			/*background-color: #38363A;*/
+			background-color: #2f2f2f;
+			border: 1px solid #444246;
+			padding: 1px;
+			/*box-shadow: 0 0 2px 1px #1B1C22;*/
+			/*border-radius: 2px;*/
+			visibility: visible;
+		}
 
-@keyframes pop {
-    0% {
-        transform:scale(0) rotate(0);
-        opacity:0;
-    }
-    60% {
-        transform:scale(1.25) rotate(300deg);
-        opacity:1;
-    }
-    100% {
-        transform:scale(1) rotate(60deg);
-        opacity:0;
-    }
-}
-</style>
+		@media only screen and (orientation:portrait) {
+			#status-progress {
+				width: 61.8%;
+			}
+		}
+
+		#status-progress-inner {
+			height: 100%;
+			width: 0;
+			box-sizing: border-box;
+			transition: width 0.5s linear;
+			background-color: #efefef;
+			/*border: 1px solid #222223;*/
+			/*box-shadow: 0 0 1px 1px #27282E;*/
+			/*border-radius: 3px;*/
+		}
+
+		#status-indeterminate {
+			height: 42px;
+			visibility: visible;
+			position: relative;
+		}
+
+		#status-indeterminate > div {
+			width: 4.5px;
+			height: 0;
+			border-style: solid;
+			border-width: 9px 3px 0 3px;
+			border-color: #2b2b2b transparent transparent transparent;
+			transform-origin: center 21px;
+			position: absolute;
+		}
+
+		#status-indeterminate > div:nth-child(1) { transform: rotate( 22.5deg); }
+		#status-indeterminate > div:nth-child(2) { transform: rotate( 67.5deg); }
+		#status-indeterminate > div:nth-child(3) { transform: rotate(112.5deg); }
+		#status-indeterminate > div:nth-child(4) { transform: rotate(157.5deg); }
+		#status-indeterminate > div:nth-child(5) { transform: rotate(202.5deg); }
+		#status-indeterminate > div:nth-child(6) { transform: rotate(247.5deg); }
+		#status-indeterminate > div:nth-child(7) { transform: rotate(292.5deg); }
+		#status-indeterminate > div:nth-child(8) { transform: rotate(337.5deg); }
+
+		#status-notice {
+			margin: 0 100px;
+			line-height: 1.3;
+			visibility: visible;
+			padding: 4px 6px;
+			visibility: visible;
+		}
+	</style>
+	<!-- Poki SDK include -->
+	<script src="patch/js/poki-sdk.js"></script>
+	<script>
+		window.addEventListener('keydown', ev => {
+			if (['ArrowDown', 'ArrowUp', ' '].includes(ev.key)) {
+				ev.preventDefault();
+			}
+		});
+		window.addEventListener('wheel', ev => ev.preventDefault(), { passive: false });
+	</script>
+
+<link id='-gd-engine-icon' rel='icon' type='image/png' href='index.icon.png' />
+<link rel='apple-touch-icon' href='index.apple-touch-icon.png'/>
+<link rel='manifest' href='index.manifest.json'>
+
+	<script> 
+		//place sitelock code here.
+	</script>
+	
 </head>
-
 <body>
+	<canvas id='canvas'>
+		HTML5 canvas appears to be unsupported in the current browser.<br />
+		Please try updating or use a different browser.
+	</canvas>
+	<div id='status'>
+		<div id='status-progress' style='display: none;' oncontextmenu='event.preventDefault();'><div id ='status-progress-inner'></div></div>
+		<div id='status-indeterminate' style='display: none;' oncontextmenu='event.preventDefault();'>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<div id='status-notice' class='godot' style='display: none;'></div>
+	</div>
 
-<h1>NOVICE CALCULUS LESSONS</h1>
-<p>Calculus lessons for begginers</p>
-<p id="credit" style="display:none;">By: Elisha P.</p>
+	<script type='text/javascript' src='index.js'></script>
+	<script type='text/javascript'>//<![CDATA[
 
-<img src="https://file.garden/auoQ7S0R41ISH5n-/logo.png" width="140px">
+		const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":13430320,"index.wasm":13789463},"focusCanvas":true,"gdnativeLibs":[],"serviceWorker":"index.service.worker.js"};
+		var engine = new Engine(GODOT_CONFIG);
 
-<br>
+		function startGameLoading() {
+			const INDETERMINATE_STATUS_STEP_MS = 100;
+			var statusProgress = document.getElementById('status-progress');
+			var statusProgressInner = document.getElementById('status-progress-inner');
+			var statusIndeterminate = document.getElementById('status-indeterminate');
+			var statusNotice = document.getElementById('status-notice');
 
-<button onclick="window.location.href = '/lesson/1'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/car.png" width="60px">
-    <br>Lesson 1
-</button>
+			var initializing = true;
+			var statusMode = 'hidden';
 
-<button onclick="window.location.href = '/polytrack-main/'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/carbetter" width="60px">
-    <br>Lesson 2
-</button>
+			var animationCallbacks = [];
+			function animate(time) {
+				animationCallbacks.forEach(callback => callback(time));
+				requestAnimationFrame(animate);
+			}
+			requestAnimationFrame(animate);
 
-<button onclick="window.location.href = '/lesson/3'">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSatB2K5fid72725457pwHXLUyZbp98ssxI1BY-fArZOw&s=10" width="60px">
-    <br>Lesson 3
-</button>
+			function setStatusMode(mode) {
 
-<button onclick="window.location.href = '/lesson/4'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/bowl.png" width="60px">
-    <br>Lesson 4
-</button>
+				if (statusMode === mode || !initializing)
+					return;
+				[statusProgress, statusIndeterminate, statusNotice].forEach(elem => {
+					elem.style.display = 'none';
+				});
+				animationCallbacks = animationCallbacks.filter(function(value) {
+					return (value != animateStatusIndeterminate);
+				});
+				switch (mode) {
+					case 'progress':
+						statusProgress.style.display = 'block';
+						break;
+					case 'indeterminate':
+						statusIndeterminate.style.display = 'block';
+						animationCallbacks.push(animateStatusIndeterminate);
+						break;
+					case 'notice':
+						statusNotice.style.display = 'block';
+						break;
+					case 'hidden':
+						break;
+					default:
+						throw new Error('Invalid status mode');
+				}
+				statusMode = mode;
+			}
 
-<button onclick="window.location.href = '/lesson/5'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/basket" width="60px">
-    <br>Lesson 5
-</button>
+			function animateStatusIndeterminate(ms) {
+				var i = Math.floor(ms / INDETERMINATE_STATUS_STEP_MS % 8);
+				if (statusIndeterminate.children[i].style.borderTopColor == '') {
+					Array.prototype.slice.call(statusIndeterminate.children).forEach(child => {
+						child.style.borderTopColor = '';
+					});
+					statusIndeterminate.children[i].style.borderTopColor = '#dfdfdf';
+				}
+			}
 
-<button onclick="window.location.href = '/lesson/6'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/surf.png" width="60px">
-    <br>Lesson 6
-</button>
+			function setStatusNotice(text) {
+				while (statusNotice.lastChild) {
+					statusNotice.removeChild(statusNotice.lastChild);
+				}
+				var lines = text.split('\n');
+				lines.forEach((line) => {
+					statusNotice.appendChild(document.createTextNode(line));
+					statusNotice.appendChild(document.createElement('br'));
+				});
+			};
 
-<button onclick="window.location.href = '/lesson/7'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/cclik" width="60px">
-    <br>Lesson 7
-</button>
+			function displayFailureNotice(err) {
+				var msg = err.message || err;
+				console.error(msg);
+				setStatusNotice(msg);
+				setStatusMode('notice');
+				initializing = false;
+			};
 
-<button onclick="window.location.href = '/lesson/8'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/geo.png" width="60px">
-    <br>Lesson 8
-</button>
+			if (!Engine.isWebGLAvailable()) {
+				displayFailureNotice('WebGL not available');
+			} else {
+				setStatusMode('indeterminate');
+				PokiSDK.gameLoadingStart();
+				engine.startGame({
+					'onProgress': function (current, total) {
+						if (total > 0) {
+							statusProgressInner.style.width = current/total * 100 + '%';
+							setStatusMode('progress');
+							if (current === total) {
+								// wait for progress bar animation
+								setTimeout(() => {
+									setStatusMode('indeterminate');
+								}, 500);
+							}
+						} else {
+							setStatusMode('indeterminate');
+						}
+					},
+				}).then(() => {
+					setStatusMode('hidden');
+					initializing = false;
+					PokiSDK.gameLoadingFinished();
+				}, displayFailureNotice);
+			}
+		}
 
-<button onclick="window.location.href = '/lesson/9'">
-    <img src="https://file.garden/auoQ7S0R41ISH5n-/lesson/img/landsurf.png" width="60px">
-    <br>Lesson 9
-</button>
-<footer style="margin-bottom:100px;"></footer>
-<script>
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Shift") {
-        document.getElementById("credit").removeAttribute("style");
-    }
-});
-</script>
+		//Poki SDK Init. 
+		PokiSDK.init().then(()=>{
+			startGameLoading()
+		}).catch(()=>{
+			startGameLoading()
+		})
+
+		let hn = window.location.hostname
+		if(hn == "localhost" || hn == "192.168.1.14"){    
+			PokiSDK.setDebug(true)
+		}
+//]]></script>
+  <script src="js/analytics_ubg_v1_4.js"></script>
+  <script src="js/ubg235_client_v1_2.js"></script>
+  <script src="js/ubg98.js"></script>
 </body>
 </html>
